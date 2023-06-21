@@ -7,9 +7,14 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-def getting_infos(list_people, list_url):
+from linkedin_scraper import actions
+
+def getting_infos_list(list_people, list_url):
 	driver = webdriver.Chrome()
-	actions.login(driver, Myemail, Linkedin_password)
+	try:
+		actions.login(driver, Myemail, Linkedin_password)
+	except:
+		print('Remplir le captcha Linkedin')
 
 	for link in list_url:
 		current_people = getting_infos(link, driver)
@@ -21,7 +26,7 @@ def getting_infos(list_people, list_url):
 
 def getting_infos(url_people, driver):
 	driver.get(url_people)
-	time.sleep(1)
+	WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "pvs-list")))
 	people2send = People()
 
 	try:
@@ -42,8 +47,6 @@ def getting_infos(url_people, driver):
 
 	people2send.post = list_text[3]
 
-	time.sleep(0.2)
-
 	#Recuperation about
 	about_exist = False
 
@@ -58,18 +61,19 @@ def getting_infos(url_people, driver):
 		people2send.about = ' '.join(section.text.split('\n')[2:-1])
 	
 	#Recuperation experience
-	url_experience = url_people + '/details/experience'
-	driver.get(url_experience)
-	time.sleep(0.5)
 
-	main = driver.find_element(By.TAG_NAME, 'main')
-	last_exp = main.find_element(By.TAG_NAME, 'li').text
+	#url_experience = url_people + '/details/experience'
+	#driver.get(url_experience)
+	#time.sleep(5)
 
-	fr_current = "aujour" in last_exp
-	en_current = "present" in last_exp
+	#main = driver.find_element(By.TAG_NAME, 'main')
+	last_exp = main.find_element(By.CLASS_NAME, 'pvs-list')
+
+	fr_current = "aujour" in last_exp.text
+	en_current = "present" in last_exp.text
 
 	if fr_current or en_current:
-		people2send.company = last_exp.split('\n')[3]
+		people2send.company = last_exp.find_element(By.TAG_NAME, 'img').get_attribute('alt')[8:]
 
 	#Predire la langue
 	if about_exist:
