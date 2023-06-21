@@ -8,14 +8,18 @@ class People:
 		self.email = 'x3'
 		self.company = 'x4'
 		self.post = 'x5'
+		self.language = 'x6'
+		self.about = 'x7'
+		self.sent = False
 		self.__id = [0,b'0']
 	
-	def setter(self, lastname, firstname, email, company, post):
+	def setter(self, lastname, firstname, email, company, post, lang):
 		self.lastname = lastname
 		self.firstname = firstname
 		self.email = email
 		self.company = company
 		self.post = post
+		self.language = lang
 
 	def email_setter(self, email=None):
 		if email:
@@ -25,7 +29,7 @@ class People:
 
 	def id_setter(self):
 		if(self.lastname == 'x1'):
-			return 0
+			return self.__id
 		else:
 			source = self.lastname + self.firstname + self.company
 			hashed = base64.b64encode(source.encode())
@@ -33,7 +37,7 @@ class People:
 				shorted_hashed = hashed.decode()[:7]
 				digit = sum(hashed)
 			self.__id = [digit, shorted_hashed]
-		return digit
+		return [digit, shorted_hashed]
 
 	def id_getter(self):
 		return self.__id
@@ -41,8 +45,8 @@ class People:
 class People_cell :
 	def __init__(self, people):
 		self.people = people
-		self.pred 
-		self.next
+		self.pred = None
+		self.next = None
 
 	def insert(self, pred_cell):
 		self.pred = pred_cell
@@ -52,11 +56,20 @@ class People_cell :
 
 class People_list:
 	def __init__(self):
-		self.head 
-		self.tail 
+		self.head = None
+		self.tail = None
 		self.len = 0
+		self.list_id = []
 
 	def append(self, people_cell):
+		id_people = people_cell.people.id_setter()
+
+		if id_people in self.list_id:
+			print('Deja existant ID : ', id_people)
+			return
+
+		self.list_id.append(id_people)
+
 		if self.len == 0:
 			self.head = people_cell
 			self.tail = people_cell
