@@ -11,7 +11,7 @@ class People:
 		self.language = 'x6'
 		self.about = 'x7'
 		self.sent = False
-		self.__id = [0,b'0']
+		self.__id = [0,'0']
 	
 	def setter(self, lastname, firstname, email, company, post, lang):
 		self.lastname = lastname
@@ -42,6 +42,25 @@ class People:
 	def id_getter(self):
 		return self.__id
 
+	def concatener_sender(self):
+		phrase = self.lastname + ";@;" + self.firstname + ";@;" + self.email + ";@;" + self.company + ";@;" + self.post + ";@;" + self.language + ";@;" + self.about + ";@;" + str(self.sent) + ";@;" + str(self.__id[0]) + ";1;" + str(self.__id[1])
+		return(phrase)
+
+	def concatener_receiver(self, phrase):
+		phrase_cut = phrase.split(";@;")
+		self.lastname = phrase_cut[0]
+		self.firstname = phrase_cut[1]
+		self.email = phrase_cut[2]
+		self.company = phrase_cut[3]
+		self.post = phrase_cut[4]
+		self.language = phrase_cut[5]
+		self.about = phrase_cut[6]
+		self.sent = (phrase_cut[7] == 'True')
+
+		id_phrase = phrase_cut[8].split(";1;")
+		self.__id = [int(id_phrase[0]), id_phrase[1]]
+
+ 
 class People_cell :
 	def __init__(self, people):
 		self.people = people
@@ -79,6 +98,33 @@ class People_list:
 			people_cell.insert(self.tail)
 			self.tail.gluer(people_cell)
 			self.tail = people_cell
+
+	def stockage(self, path):
+		if(self.len == 0):
+			return 
+
+		fichier = open(path, 'w')
+		ptr_cell = self.head
+		for cellule_cpt in range(self.len):
+			fichier.write(ptr_cell.people.concatener_sender())
+			if ptr_cell.next != None:
+				fichier.write(";@@;")
+				ptr_cell = ptr_cell.next
+		fichier.close()
+
+	def destockage(self, path):
+		fichier = open(path, 'r')
+		list_cell = fichier.read().split(";@@;")
+		if len(list_cell) == 0:
+			return
+		
+		for cell in list_cell:
+			people = People()
+			people.concatener_receiver(cell)
+
+			people_cell = People_cell(people)
+			self.append(people_cell)
+		fichier.close()
 
 
 
