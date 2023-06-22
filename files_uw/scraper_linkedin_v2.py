@@ -1,20 +1,36 @@
 from people import *
 from private_credits import Myemail, Linkedin_password
 from langdetect import detect
-
-import time
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-
 from linkedin_scraper import actions
+import time
 
 def getting_infos_list(list_people, list_url):
 	driver = webdriver.Chrome()
+
+
+	#passe = True
+	#time_out = 10 #Nombre de requêtes avant time-out => 50s pour completer les captcha 
+	#cpt = 0
+
+	#while passe and (cpt <= time_out):
+	#	cpt += 1
+	#	passe = False
+	#	try:
+	#		actions.login(driver, Myemail, Linkedin_password)
+	#	except:
+	#		print('Remplir le captcha Linkedin')
+	#		passe = False
+
 	try:
 		actions.login(driver, Myemail, Linkedin_password)
 	except:
-		print('Remplir le captcha Linkedin')
+		print("Scraper detecte")
+		waiter = input("Entrer quand connecte")
 
 	for link in list_url:
 		current_people = getting_infos(link, driver)
