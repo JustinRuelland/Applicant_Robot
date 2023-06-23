@@ -1,5 +1,4 @@
 from people import *
-from scraper_neverbounce_v2 import *
 
 def mails_finder(list_people, dict_company):
 	ptr_cell = list_people.head
@@ -11,7 +10,10 @@ def mails_finder(list_people, dict_company):
 		company_get = ptr_people.company
 		company_transcript = company_get.lower().replace(" ", "")
 		if company_transcript in dict_company.keys():
-			ptr_people.email = dict_company[company_transcript].replace("123", ptr_people.firstname).replace("456", ptr_people.lastname)
+			if "xfname" in dict_company[company_transcript]: #Adresse mail du type john.smith@company.net
+				ptr_people.email = dict_company[company_transcript].replace("xfname", ptr_people.firstname).replace("xlname", ptr_people.lastname)
+			elif "yfname" in dict_company[company_transcript]: #Adresse mail du type j.smith@company.net
+				ptr_people.email = dict_company[company_transcript].replace("yfname", ptr_people.firstname[0]).replace("xlname", ptr_people.lastname)
 			continue
 		if company_transcript in dict_unknown.keys():
 			continue
@@ -19,10 +21,16 @@ def mails_finder(list_people, dict_company):
 		if ptr_cell.next != None:
 			ptr_cell = ptr_cell.next
 	if len(dict_unknown) > 0 :
-		neverbounce_scraper_mail(dict_unknown)
+		mail_finder(dict_unknown)
 		dict_company.update(dict_unknown)
 		mails_finder(list_people, dict_company)
 
 
-
-
+def mail_finder(dictionnaire):
+	for company in dictionnaire.keys():
+		print("Company : ", dictionnaire[company])
+		mail_struct = input("Mail :") #format John.Smith@company.net
+		if "John" in mail_struct:
+			dictionnaire[company] = mail_struct.replace("John", "xfname").replace("Smith", 'xlname')
+		elif "F1N1L" in mail_struct:
+			dictionnaire[company] = mail_struct.replace("F1N1L", "yfname").replace("Smith", 'xlname')
