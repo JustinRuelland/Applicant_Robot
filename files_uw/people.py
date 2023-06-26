@@ -113,6 +113,8 @@ class People_list:
 			if id == ptr_people.id_getter():
 				ptr_people.print()
 				return
+			if ptr_cell.next != None:
+				ptr_cell = ptr_cell.next
 		print("ID introuvable")
 		return
 
