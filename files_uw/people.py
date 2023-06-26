@@ -60,6 +60,13 @@ class People:
 		id_phrase = phrase_cut[8].split(";1;")
 		self.__id = [int(id_phrase[0]), id_phrase[1]]
 
+	def print(self):
+		print("----------------------------")
+		print(self.firstname, self.lastname)
+		print(self.email, self.company, self.post)
+		print(self.language, self.sent)
+		print("ID :", self.__id)
+		print("----------------------------")
  
 class People_cell :
 	def __init__(self, people):
@@ -98,6 +105,17 @@ class People_list:
 			people_cell.insert(self.tail)
 			self.tail.gluer(people_cell)
 			self.tail = people_cell
+
+	def id_searcher(self, id):
+		ptr_cell = self.head
+		for cellule_cpt in range(self.len):
+			ptr_people = ptr_cell.people
+			if id == ptr_people.id_getter():
+				ptr_people.print()
+				return
+		print("ID introuvable")
+		return
+
 
 	def stockage(self, path):
 		if(self.len == 0):
